@@ -15,6 +15,7 @@ Complete the following exercises using the `lubridate` and `purrr` packages in R
 
 ```{r}
 library(tidyverse)
+library(lubridate)
 ```
 
 ## Exercise Functions:
@@ -25,9 +26,9 @@ Write a function (using r code and structure demonstrated in class) to calculate
 Observed value = 25.77, mean = 23.54, standard deviation = 2.442
 
 ```{r}
-fun_z = function(value, mean, sd) {
-z = ((value - mean) / sd)
-  return(z)
+fun_z = function(value, mean, sd) { # Function to create z score
+z = ((value - mean) / sd) # calculates the z score
+  return(z) 
 }
 fun_z(25.77, 23.54, 2.442)
 ```
@@ -62,8 +63,8 @@ Use and show R coding to calculate the standard deviation for each variable of t
 ```{r}
 sd_vec = vector(mode = "numeric", length = length(mtcars))
 
-for (i in seq_along(mtcars)) {
-  sd_vec[[i]] = sd(mtcars[[i]], na.rm = TRUE)
+for (i in seq_along(mtcars)) { # this line determines the number of iterations for the loop
+  sd_vec[[i]] = sd(mtcars[[i]], na.rm = TRUE) # Calculates the standard deviation for each iteration of the loop
 }
 sd_vec
 ```
@@ -76,7 +77,7 @@ Write only one line of the code to return only the leap years for years 2024, 30
 
 ```{r}
 leapz = c(2024, 3021, 2000, 1800, 800, 5050, 600, 7156)
-leapz[c(leapz %% 4 == 0) & ((leapz %% 100 != 0) | (leapz %% 400 == 0))]
+leapz[c(leapz %% 4 == 0) & ((leapz %% 100 != 0) | (leapz %% 400 == 0))] # this line extracts values from the vector according to a formula for leap years. 
 ```
 
 The wording of the question is ambiguous, but I interpreted it as requesting that the code return only the years on the given list that are leap years. The section of the list that states 2000 or 1800 I determined was an error, since there is no condition for determining whether to choose 2000 or 1800. I also assumed that creating the vector was a necessary step before the requested "one line of the code" to extract the requested values. I made this assumption because that exercise most closely mirrors what was taught in class. I then used a leap year formula that I found online to make the calculation. I finally, I will verify my answer with the code below.
@@ -91,6 +92,17 @@ leapz[tru_leap]
 ### Question 5:
 
 Generate a sequence of dates from **January 1, 2015** to **December 31, 2025**, spaced by every **two months**. Extract the **year**, **quarter**, and **ISO week number** for each date.
+
+```{r}
+
+datez = seq(ymd("2015-01-01"), ymd("2025-12-31"), by = "2 months")
+datez_df = tibble(
+  dates = year(datez),
+  quarters = quarter(datez),
+  isoweek = isoweek(datez))
+```
+
+I used seq to generate a list of dates between the two dates noted. The dates had to be properly identified using ymd() for seq to recognize them as such. Since the question asks to extract each year, quarter, and ISO week number from each date, I determined that a tibble would be a better format than extracting each of these elements separately.
 
 ### Question 6:
 
