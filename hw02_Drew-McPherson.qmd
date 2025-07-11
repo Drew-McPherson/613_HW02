@@ -61,7 +61,7 @@ Use and show R coding to calculate the standard deviation for each variable of t
 -   Body – the operations performed in each iteration
 
 ```{r}
-sd_vec = vector(mode = "numeric", length = length(mtcars))
+sd_vec = vector(mode = "numeric", length = length(mtcars)) # creating the vector before the loop to reserve memory and save speed.
 
 for (i in seq_along(mtcars)) { # this line determines the number of iterations for the loop
   sd_vec[[i]] = sd(mtcars[[i]], na.rm = TRUE) # Calculates the standard deviation for each iteration of the loop
@@ -111,6 +111,29 @@ Given the following dates, compute the difference in **months** and **weeks** be
 ``` r
 sample_dates <- c("2018-03-15", "2020-07-20", "2023-01-10", "2025-09-05")
 ```
+
+```{r}
+# Need to convert the dates given into dates because they are characters in the vector above.
+sample_dates = as.Date(c("2018-03-15", "2020-07-20", "2023-01-10", "2025-09-05"))
+
+# Creating vectors before the loop for efficiency and to allocate memory
+n = length(sample_dates) - 1 # Subtract 1 from sample_dates length so that it does not try to calculate the final unpaired date
+month_diffs = numeric(n)
+week_diffs = numeric(n)
+
+# Loop through and calculate differences
+for (i in seq_len(n)) { 
+  # Calculate weeks and months using interval
+  week_diffs[i] = interval(sample_dates[i], sample_dates[i + 1]) / weeks(1)
+  month_diffs[i] = interval(sample_dates[i], sample_dates[i + 1]) / months(1)
+  # Note that the month calculation is based on an assumption of a 30 day month.
+  print(paste0("Calculation ", i, ": Month Difference: ", month_diffs[i]))
+  print(paste0("Calculation ", i, ": Week Difference: ", week_diffs[i]))
+  }
+
+```
+
+To provide this information I assumed we were supposed to treat the vector, rather than manually creating each pair. I therefore created a loop based on the length of the vector, but subtracting 1 since the number of differences must be one less than the number of vectors. To calculate the difference between the dates, I used interval, since this is a lubridate function and was referenced in our reading. However, it should be noted that lubridate calculates a month as 30 days, and therefore the month calculation is based on this principle rather than literal months.
 
 ### Question 7: Higher-Order Functions with purrr
 
