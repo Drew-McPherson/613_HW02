@@ -72,7 +72,19 @@ This code creates a For Loop that is equivalent to the across() function. sd_vec
 
 ### Question 4:
 
-Write only one line of the code to return only the leap years fo years 2024, 3021, 2000 or 1800, 800, 5050, 600 and 7156. using subsetting with `[]` and without using built-in functions.
+Write only one line of the code to return only the leap years for years 2024, 3021, 2000 or 1800, 800, 5050, 600 and 7156. using subsetting with `[]` and without using built-in functions.
+
+```{r}
+leapz = c(2024, 3021, 2000, 1800, 800, 5050, 600, 7156)
+leapz[c(leapz %% 4 == 0) & ((leapz %% 100 != 0) | (leapz %% 400 == 0))]
+```
+
+The wording of the question is ambiguous, but I interpreted it as requesting that the code return only the years on the given list that are leap years. The section of the list that states 2000 or 1800 I determined was an error, since there is no condition for determining whether to choose 2000 or 1800. I also assumed that creating the vector was a necessary step before the requested "one line of the code" to extract the requested values. I made this assumption because that exercise most closely mirrors what was taught in class. I then used a leap year formula that I found online to make the calculation. I finally, I will verify my answer with the code below.
+
+```{r}
+tru_leap = leap_year(leapz)
+leapz[tru_leap]
+```
 
 ## Advanced Date Manipulation with lubridate
 
