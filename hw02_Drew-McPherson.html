@@ -326,6 +326,27 @@ Observed value = 25.77, mean = 23.54, standard deviation = 2.442</p>
 <h3 class="anchored" data-anchor-id="question-8-combining-lubridate-and-purrr">Question 8: Combining lubridate and purrr</h3>
 <p>Given a list of mixed date formats, use <code>map()</code> and <code>possibly()</code> from <code>purrr</code> to safely convert them to <strong>Date</strong> format and extract the <strong>month name</strong>.</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>date_strings <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">"2023-06-10"</span>, <span class="st">"2022/12/25"</span>, <span class="st">"15-Aug-2021"</span>, <span class="st">"InvalidDate"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Input list</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>date_strings <span class="ot">=</span> <span class="fu">list</span>(<span class="st">"2023-06-10"</span>, <span class="st">"2022/12/25"</span>, <span class="st">"15-Aug-2021"</span>, <span class="st">"InvalidDate"</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Using possibly() lets us safely evaluate the dates</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>safe_parse <span class="ot">=</span> <span class="fu">possibly</span>(</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span> <span class="fu">parse_date_time</span>(.x, <span class="at">orders =</span> <span class="fu">c</span>(<span class="st">"ymd"</span>, <span class="st">"dmy"</span>, <span class="st">"Y/m/d"</span>, <span class="st">"d-b-Y"</span>), <span class="at">quiet =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">otherwise =</span> NA_Date_</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Parse the dates from the converted string</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>parsed_dates <span class="ot">=</span> <span class="fu">map</span>(date_strings, safe_parse)</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="co"># apply the lubridate month function to each value and convert to character rather than number</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>month_names <span class="ot">=</span> <span class="fu">map_chr</span>(parsed_dates, <span class="sc">~</span> <span class="fu">as.character</span>(<span class="fu">month</span>(.x, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">abbr =</span> <span class="cn">FALSE</span>))) </span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>month_names </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "June"     "December" "August"   NA        </code></pre>
+</div>
+</div>
+<p>Since there are different date formats possible for this problem, we will use possibly() to manage risk of an unacceptable datetime. parse_date_time() will manage the most obvious datetime formats such as ymd, dmy, y/m/d, and d-b-y, we still need to account for what happens if a totally unexpected value is provided. Possibly() therefore returns NA_date. This code is applied via map() to the dates provided, which returns the dates in proper datetime. Finally, the months are extracted from each of these dates via the lubridate month() function.</p>
 </section>
 </section>
 <section id="submission" class="level2">

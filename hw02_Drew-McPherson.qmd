@@ -177,6 +177,26 @@ Given a list of mixed date formats, use `map()` and `possibly()` from `purrr` to
 date_strings <- list("2023-06-10", "2022/12/25", "15-Aug-2021", "InvalidDate")
 ```
 
+```{r}
+# Input list
+date_strings = list("2023-06-10", "2022/12/25", "15-Aug-2021", "InvalidDate")
+
+# Using possibly() lets us safely evaluate the dates
+safe_parse = possibly(
+  ~ parse_date_time(.x, orders = c("ymd", "dmy", "Y/m/d", "d-b-Y"), quiet = TRUE),
+  otherwise = NA_Date_
+)
+
+# Parse the dates from the converted string
+parsed_dates = map(date_strings, safe_parse)
+# apply the lubridate month function to each value and convert to character rather than number
+month_names = map_chr(parsed_dates, ~ as.character(month(.x, label = TRUE, abbr = FALSE))) 
+
+month_names 
+```
+
+Since there are different date formats possible for this problem, we will use possibly() to manage risk of an unacceptable datetime. parse_date_time() will manage the most obvious datetime formats such as ymd, dmy, y/m/d, and d-b-y, we still need to account for what happens if a totally unexpected value is provided. Possibly() therefore returns NA_date. This code is applied via map() to the dates provided, which returns the dates in proper datetime. Finally, the months are extracted from each of these dates via the lubridate month() function.
+
 ## Submission
 
 -   Save your Quarto file after completing each problem, render it, then stage and commit the changes.\
